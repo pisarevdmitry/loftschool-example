@@ -7,7 +7,7 @@
  Посмотрите как работает forEach и повторите это поведение для массива, который будет передан в параметре array
  */
 function forEach(array, fn) {
-    for (let index=0 ; index<array.length; index++) {
+    for (let index = 0 ; index < array.length; index++) {
         fn(array[index], index, array)
     }
 }
@@ -21,8 +21,8 @@ function forEach(array, fn) {
 function map(array, fn) {
     let newArray =[];
 
-    for (let index=0 ; index<array.length; index++) {
-        newArray[index] = fn(array[index], index, array)
+    for (let index=0 ; index < array.length; index++) {
+        newArray.push(fn(array[index], index, array))
     }
 
     return newArray;
@@ -38,10 +38,10 @@ function reduce(array, fn, initial) {
     let index;
 
     if (initial === undefined) {
-        index =1;
+        index = 1;
         initial = array[0]
     } else {
-        index =0
+        index = 0
     }
     for (; index < array.length; index++) {
         initial = fn(initial, array[index], index, array)
@@ -59,13 +59,11 @@ function reduce(array, fn, initial) {
    upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
  */
 function upperProps(obj) {
-    let arr = [],
-        index = 0;
+    let arr = [];
 
     for (let prop in obj) {
         if (obj.hasOwnProperty(prop)) {
-            arr[index] = prop.toUpperCase();
-            index++
+            arr.push( prop.toUpperCase()) ;
         }
     }
 
@@ -82,7 +80,7 @@ function slice(array, from = 0, to = array.length) {
     let newArray = [];
 
     if (to > array.length) {
-        to= array.length
+        to = array.length
     } else if (to < 0) {
         to = array.length +to > 0 ?array.length +to: 0 ;
     }
@@ -90,9 +88,8 @@ function slice(array, from = 0, to = array.length) {
         from = array.length + from > 0 ?array.length +from: 0 ;
     }
 
-    for (let i= from, index=0; i< to ;i++, index++) {
-
-        newArray[index] = array[i];
+    for (let index = from; index < to ; index++) {
+        newArray.push( array[index])
     }
 
     return newArray;
