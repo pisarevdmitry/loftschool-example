@@ -82,10 +82,10 @@ function slice(array, from = 0, to = array.length) {
     if (to > array.length) {
         to = array.length
     } else if (to < 0) {
-        to = array.length +to > 0 ?array.length +to: 0 ;
+        to = array.length + to > 0 ?array.length + to: 0 ;
     }
     if (from < 0) {
-        from = array.length + from > 0 ?array.length +from: 0 ;
+        from = array.length + from > 0 ?array.length + from: 0 ;
     }
 
     for (let index = from; index < to ; index++) {
@@ -106,7 +106,7 @@ function createProxy(obj) {
         set(obj, prop, value) {
             obj[prop] = value * value;
 
-            return true;
+            return obj[prop];
         }
     });
 
