@@ -130,7 +130,7 @@ function deleteTextNodesRecursive(where) {
         if (child.nodeType === 1) {
             deleteTextNodesRecursive(child);
             child = child.nextSibling
-        } else {
+        } else if (child.nodeType === 3) {
             let rm = child;
 
             child = child.nextSibling;
@@ -185,7 +185,7 @@ function collectDOMStat(root) {
                     }
                 }
                 count(child)
-            } else {
+            } else if (child.nodeType === 3) {
                 texts++
             }
         }
