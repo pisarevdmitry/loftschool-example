@@ -11,6 +11,11 @@
    createDivWithText('loftschool') // создаст элемент div, поместит в него 'loftschool' и вернет созданный элемент
  */
 function createDivWithText(text) {
+    const div = document.createElement('div');
+
+    div.innerText = text;
+
+    return div
 }
 
 /*
@@ -21,7 +26,12 @@ function createDivWithText(text) {
  Пример:
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
+
 function prepend(what, where) {
+    let child = where.childNodes;
+
+    where.insertBefore(what, child[0])
+
 }
 
 /*
@@ -44,6 +54,16 @@ function prepend(what, where) {
    findAllPSiblings(document.body) // функция должна вернуть массив с элементами div и span т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
+    let children = where.children,
+        result = [];
+
+    for (let i=0; i < children.length - 1; i++ ) {
+        if (children[i].nextSibling.tagName === 'P') {
+            result.push(children[i])
+        }
+    }
+
+    return result
 }
 
 /*
@@ -64,9 +84,9 @@ function findAllPSiblings(where) {
    findError(document.body) // функция должна вернуть массив с элементами 'привет' и 'loftschool'
  */
 function findError(where) {
-    var result = [];
+    let result = [];
 
-    for (var child of where.childNodes) {
+    for (let child of where.children) {
         result.push(child.innerText);
     }
 
@@ -86,6 +106,11 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    for (let child of where.childNodes) {
+        if (child.nodeType === 3) {
+            child.remove();
+        }
+    }
 }
 
 /*
@@ -101,6 +126,17 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    for (let child = where.firstChild; child ; ) {
+        if (child.nodeType === 1) {
+            deleteTextNodesRecursive(child);
+            child = child.nextSibling
+        } else if (child.nodeType === 3) {
+            let rm = child;
+
+            child = child.nextSibling;
+            rm.remove();
+        }
+    }
 }
 
 /*
@@ -124,6 +160,43 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    let texts = 0,
+        tags = {},
+        classes = {};
+
+    function count (elem) {
+        for (let child = elem.firstChild; child ; child = child.nextSibling ) {
+            if (child.nodeType === 1) {
+                let tag = child.tagName;
+                let classList = child.classList;
+
+                if (tags[tag]) {
+                    tags[tag] = ++tags[tag]
+                } else {
+                    tags[tag] = 1
+                }
+                if (classList) {
+                    for (let item of classList) {
+                        if (classes[item]) {
+                            classes[item] = ++classes[item]
+                        } else {
+                            classes[item] = 1
+                        }
+                    }
+                }
+                count(child)
+            } else if (child.nodeType === 3) {
+                texts++
+            }
+        }
+    }
+    count(root);
+
+    return {
+        tags,
+        classes,
+        texts
+    }
 }
 
 /*
@@ -159,6 +232,26 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+    let observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            let add = Array.from(mutation.addedNodes);
+
+            if (add.length > 0) {
+                fn({
+                    type: 'insert',
+                    nodes: add
+                })
+            } else {
+                fn({
+                    type: 'remove',
+                    nodes: Array.from(mutation.removedNodes)
+                })
+            }
+        });
+    });
+    let config = { childList: true, subtree: true };
+
+    observer.observe(where, config)
 }
 
 export {
