@@ -27,6 +27,34 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+    const div = document.createElement('div');
+    const screenWidth = document.documentElement.clientWidth;
+    const screenHeight = document.documentElement.clientHeight;
+    const divWidth = Math.floor(Math.random() * screenWidth / 2);
+    const divHeight = Math.floor(Math.random() * screenHeight / 2);
+
+    function getRandomColor() {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+
+        return color;
+    }
+    div.classList = 'draggable-div';
+    div.style.cssText = `
+           background-color : ${getRandomColor()};
+           width: ${divWidth}px;
+           height: ${divHeight}px;
+           position : absolute;
+           top : ${(Math.random() * (screenHeight - divHeight) )}px;
+           left : ${(Math.random() * (screenWidth - divWidth) )}px;
+           cursor: pointer`;
+
+    return div
+
 }
 
 /*
@@ -38,6 +66,36 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    target.addEventListener('mousedown', event => {
+        const getCoords = elem => {
+            let box = elem.getBoundingClientRect();
+
+            return {
+                top: box.top + pageYOffset,
+                left: box.left + pageXOffset
+            };
+        };
+        const move = (event) => {
+            target.style.left = event.pageX - shiftX + 'px';
+            target.style.top = event.pageY - shiftY + 'px';
+        };
+        let coords = getCoords(target);
+        let shiftX = event.pageX - coords.left;
+        let shiftY = event.pageY - coords.top;
+
+        target.style.zIndex = 1000;
+
+        move(event);
+        target.ondragstart = () => {
+            return false;
+        };
+        document.addEventListener('mousemove', move );
+        target.addEventListener('mouseup', () =>{
+            target.style.zIndex = 0;
+            document.removeEventListener('mousemove', move)
+        })
+
+    })
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
