@@ -41,35 +41,35 @@ function loadTowns() {
 
     loadingBlock.innerText = 'Загрузка...';
 
-    return new Promise((resolve) =>{
-        fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', { method: 'GET' })
-            .then(response =>{
-                return response.json()
-            })
-            .then(data => {
-                let result = data.sort((a, b) =>  a.name <= b.name ? -1 : 1);
+    return fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', { method: 'GET' })
+        .then(response =>{
+            return response.json()
+        })
+        .then(data => {
+            let result = data.sort((a, b) =>  a.name <= b.name ? -1 : 1);
 
-                loadingBlock.innerText = '';
-                filterBlock.style.display = 'block';
-                if (repeat) {
-                    repeat.style.display = 'none'
-                }
-                resolve(result)
-            })
-            .catch(() => {
-                loadingBlock.innerText = 'Не удалось загрузить города';
-                if (!repeat) {
-                    let button = document.createElement('button');
+            loadingBlock.innerText = '';
+            filterBlock.style.display = 'block';
+            if (repeat) {
+                repeat.style.display = 'none'
+            }
 
-                    button.innerText = 'Повторить';
-                    button.classList = 'repeat';
-                    button.addEventListener('click', loadTowns);
-                    homeworkContainer.insertBefore(button, filterBlock)
-                } else {
-                    repeat.style.display = 'inline-block'
-                }
-            })
-    })
+            return result
+        })
+        .catch(() => {
+            loadingBlock.innerText = 'Не удалось загрузить города';
+            if (!repeat) {
+                let button = document.createElement('button');
+
+                button.innerText = 'Повторить';
+                button.classList = 'repeat';
+                button.addEventListener('click', loadTowns);
+                homeworkContainer.insertBefore(button, filterBlock)
+            } else {
+                repeat.style.display = 'inline-block'
+            }
+        })
+
 }
 
 /*
