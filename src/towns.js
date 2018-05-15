@@ -63,7 +63,9 @@ function loadTowns() {
 
                 button.innerText = 'Повторить';
                 button.classList = 'repeat';
-                button.addEventListener('click', loadTowns);
+                button.addEventListener('click', () =>{
+                    list = loadTowns()
+                });
                 homeworkContainer.insertBefore(button, filterBlock)
             } else {
                 repeat.style.display = 'inline-block'
@@ -99,13 +101,14 @@ const filterBlock = homeworkContainer.querySelector('#filter-block');
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
-const list = loadTowns();
+let list = loadTowns();
 
 filterInput.addEventListener('keyup', function() {
     let request = filterInput.value;
     let fragment = document.createDocumentFragment();
 
     list.then(values => {
+
         filterResult.innerHTML= '';
         values.filter(item => isMatching(item.name, request)).forEach((item) => {
             let div = document.createElement('div');
