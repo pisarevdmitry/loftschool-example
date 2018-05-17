@@ -43,10 +43,83 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('keyup', function() {
-    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+showCookie(document.cookie.split(';'));
+
+function showCookie(cookie) {
+    if (!cookie) {
+        return
+    }
+    listTable.innerHTML='';
+    cookie.forEach(item => {
+        item = item.trim();
+        addCookie(item)
+    })
+}
+function addCookie(cookie) {
+    let [CookieName, CookieValue] = cookie.split('=')
+    const line = document.createElement('tr');
+    const itemName = document.createElement('td');
+    const itemValue = document.createElement('td');
+    const buttonDelete = document.createElement('button');
+
+    itemName.innerText = CookieName;
+    itemValue.innerText = CookieValue;
+    buttonDelete.innerText = 'Удалить куку';
+    line.appendChild(itemName);
+    line.appendChild(itemValue);
+    line.appendChild(buttonDelete);
+    listTable.appendChild(line)
+}
+
+function isValid([name, value], filter) {
+    name = name.toUpperCase();
+    value = value.toUpperCase();
+    filter = filter.toUpperCase();
+
+    return (name.indexOf(filter) >= 0 || value.indexOf(filter) >= 0)
+}
+function filterCookie() {
+    let list = document.cookie,
+        filter = filterNameInput.value,
+        cookie = list.split(';');
+
+    if (!filter) {
+        showCookie(cookie)
+    } else {
+        let filtered = cookie.filter(item =>{
+            return isValid(item.split('='), filter)
+        });
+
+        showCookie(filtered)
+    }
+}
+listTable.addEventListener('click', (e) =>{
+    if (e.target.tagName === 'BUTTON') {
+        let parent = e.target.parentNode,
+            CookieName = parent.firstElementChild.innerText;
+
+        document.cookie =`${CookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT `;
+        parent.remove()
+    }
 });
+filterNameInput.addEventListener('keyup', filterCookie)
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    let filter = filterNameInput.value;
+    let CookieName = addNameInput.value,
+        CookieValue = addValueInput.value;
+
+    if (!CookieName || !CookieValue) {
+        return
+    }
+    if (document.cookie.indexOf(`${CookieName}=`) >= 0) {
+        document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
+        filterCookie();
+    } else {
+        if ( isValid([CookieName, CookieValue], filter)) {
+            addCookie(`${CookieName}=${CookieValue}`);
+        }
+        document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
+    }
 });
