@@ -46,7 +46,7 @@ function loadTowns() {
             return response.json()
         })
         .then(data => {
-            let result = data.sort((a, b) =>  a.name <= b.name ? -1 : 1);
+            let result = data.sort((a, b) => a.name <= b.name ? -1 : 1);
 
             loadingBlock.innerText = '';
             filterBlock.style.display = 'block';
