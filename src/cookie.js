@@ -43,7 +43,7 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-showCookie(document.cookie.split(';'));
+showCookie(document.cookie.split('; '));
 
 function showCookie(cookie) {
     if (!cookie) {
@@ -51,12 +51,11 @@ function showCookie(cookie) {
     }
     listTable.innerHTML='';
     cookie.forEach(item => {
-        item = item.trim();
         addCookie(item)
     })
 }
 function addCookie(cookie) {
-    let [CookieName, CookieValue] = cookie.split('=')
+    let [CookieName, CookieValue] = cookie.split('=');
     const line = document.createElement('tr');
     const itemName = document.createElement('td');
     const itemValue = document.createElement('td');
@@ -81,7 +80,7 @@ function isValid([name, value], filter) {
 function filterCookie() {
     let list = document.cookie,
         filter = filterNameInput.value,
-        cookie = list.split(';');
+        cookie = list.split('; ');
 
     if (!filter) {
         showCookie(cookie)
