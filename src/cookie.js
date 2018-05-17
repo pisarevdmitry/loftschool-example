@@ -92,6 +92,20 @@ function filterCookie() {
         showCookie(filtered)
     }
 }
+function changeTable(CookieName, CookieValue, flag = true) {
+    for (let item of listTable.children) {
+        if (item.firstElementChild.innerText === CookieName) {
+            if (flag) {
+                item.firstElementChild.nextElementSibling.innerText = CookieValue;
+
+                return
+            }
+            item.remove();
+
+            return
+        }
+    }
+}
 listTable.addEventListener('click', (e) =>{
     if (e.target.tagName === 'BUTTON') {
         let parent = e.target.parentNode,
@@ -112,13 +126,21 @@ addButton.addEventListener('click', () => {
     if (!CookieName || !CookieValue) {
         return
     }
-    if (document.cookie.indexOf(`${CookieName}=`) >= 0) {
-        document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
-        filterCookie();
-    } else {
-        if ( isValid([CookieName, CookieValue], filter)) {
+
+    if (isValid([CookieName, CookieValue], filter)) {
+        if (document.cookie.indexOf(`${CookieName}=`) >= 0) {
+            changeTable(CookieName, CookieValue)
+            document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
+        } else {
             addCookie(`${CookieName}=${CookieValue}`);
+            document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
         }
-        document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
+    } else {
+        if (document.cookie.indexOf(`${CookieName}=`) >= 0) {
+            changeTable(CookieName, CookieValue, false)
+            document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
+        } else {
+            document.cookie =`${CookieName}=${CookieValue}; expires=3600 `;
+        }
     }
 });
