@@ -45,7 +45,9 @@ function skipDefault(eventName, target) {
    emulateClick(document.querySelector('a')) // для указанного элемента должно быть сэмулировано события click
  */
 function emulateClick(target) {
-    target.click()
+    let event = new Event('click');
+
+    target.dispatchEvent(event);
 }
 
 /*
@@ -59,7 +61,7 @@ function emulateClick(target) {
  */
 function delegate(target, fn) {
     target.addEventListener('click', event => {
-        if (event.target.tagName === 'BUTTON') {
+        if (event.target.tagName.toUpperCase() === 'BUTTON') {
             fn()
         }
     })
