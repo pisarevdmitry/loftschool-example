@@ -37,6 +37,41 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    const repeat = document.querySelector('.repeat');
+
+    loadingBlock.innerText = 'Загрузка...';
+
+    return fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', { method: 'GET' })
+        .then(response =>{
+            return response.json()
+        })
+        .then(data => {
+            let result = data.sort((a, b) =>  a.name <= b.name ? -1 : 1);
+
+            loadingBlock.innerText = '';
+            filterBlock.style.display = 'block';
+            if (repeat) {
+                repeat.style.display = 'none'
+            }
+
+            return result
+        })
+        .catch(() => {
+            loadingBlock.innerText = 'Не удалось загрузить города';
+            if (!repeat) {
+                let button = document.createElement('button');
+
+                button.innerText = 'Повторить';
+                button.classList = 'repeat';
+                button.addEventListener('click', () =>{
+                    list = loadTowns()
+                });
+                homeworkContainer.insertBefore(button, filterBlock)
+            } else {
+                repeat.style.display = 'inline-block'
+            }
+        })
+
 }
 
 /*
@@ -51,6 +86,11 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    if (!chunk) {
+        return false
+    }
+
+    return full.toUpperCase().indexOf(chunk.toUpperCase()) >= 0
 }
 
 /* Блок с надписью "Загрузка" */
@@ -61,9 +101,25 @@ const filterBlock = homeworkContainer.querySelector('#filter-block');
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
+let list = loadTowns();
 
 filterInput.addEventListener('keyup', function() {
-    // это обработчик нажатия кливиш в текстовом поле
+    let request = filterInput.value;
+    let fragment = document.createDocumentFragment();
+
+    list.then(values => {
+
+        filterResult.innerHTML= '';
+        values.filter(item => isMatching(item.name, request)).forEach((item) => {
+            let div = document.createElement('div');
+
+            div.innerText = item.name;
+            fragment.appendChild(div)
+
+        });
+        filterResult.appendChild(fragment)
+    })
+
 });
 
 export {
